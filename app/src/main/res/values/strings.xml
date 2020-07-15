@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">Test App</string>
+    <string name="option_get_place">Get place</string>
+    <string name="pick_place">Choose a place</string>
+    <string name="default_info_snippet">No places found, because location permission is disabled.</string>
+    <string name="default_info_title">Default Location</string>
+    <string name="error_no_internet">Koneksi terputus</string>
+    <string name="text_try_again">Coba Lagi</string>
+    <string name="error_no_internet_body">Periksa koneksi internet \n pada alat komunikasi</string>
+    <string name="error_server_busy">Server saat ini \n sangat sibuk</string>
+    <string name="error_general_issue">Silakan coba beberapa saat lagi</string>
+    <string name="error_no_data">Tidak ditemukan data</string>
+    <string name="error_no_data_title">Opps… Data Tidak Tersedia</string>
+    <string name="error_no_data_desc">Mohon maaf silakan coba kembali beberapa saat lagi ya</string>
+
 </resources>
