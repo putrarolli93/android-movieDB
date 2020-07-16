@@ -1,15 +1,14 @@
-package com.example.testapp
+package com.example.testapp.ui.home
 
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.testapp.ui.home.NowPlayingMovieAdapter
-import com.example.testapp.ui.home.PopularMovieAdapter
-import com.example.testapp.ui.home.TopMovieAdapter
+import com.example.testapp.R
 import com.example.testapp.utils.base.BaseActivity
 import com.example.testapp.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_main_toolbar.*
+import org.jetbrains.anko.startActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : BaseActivity() {
@@ -21,11 +20,10 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        supportActionBar?.hide()
         setContentView(R.layout.activity_main)
         headerText.text = "Movie"
         ivFavorite.setOnClickListener {
-
+            startActivity<FavoriteActivity>()
         }
         setPopularAdapter()
         setTopAdapter()

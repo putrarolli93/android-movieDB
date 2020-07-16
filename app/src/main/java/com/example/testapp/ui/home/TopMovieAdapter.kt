@@ -10,6 +10,7 @@ import com.example.testapp.utils.Constants
 import com.example.testapp.utils.ext.loadFromUrl
 import kotlinx.android.synthetic.main.layout_item_movie.view.*
 import kotlinx.android.synthetic.main.layout_item_movie_banner.view.imgMovie
+import org.jetbrains.anko.intentFor
 
 class TopMovieAdapter : RecyclerView.Adapter<TopMovieViewHolder>() {
 
@@ -43,6 +44,11 @@ class TopMovieViewHolder(private val view: View): RecyclerView.ViewHolder(view) 
             tvTitle.text = item.title
             tvRelease.text = "Release: " + item.release_date
             imgMovie.loadFromUrl(Constants.IMAGE_PATH + item.poster_path)
+            imgMovie.setOnClickListener {
+                context.startActivity(context.intentFor<MovieDetailActivity>(
+                    "item" to item
+                ))
+            }
         }
     }
 

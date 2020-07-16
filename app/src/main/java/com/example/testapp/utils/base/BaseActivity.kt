@@ -17,6 +17,7 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setupWindowTransition()
         showHorizonTopProgressBar()
+        supportActionBar?.hide()
     }
 
     private fun setupWindowTransition() {
