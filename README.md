@@ -1,12 +1,13 @@
-# android-mvvm-koin
+# android-mvvm
 
 
-this repo is for super simple example for MVVM architecture by using Koin for Depedency injection
+this repo is for super simple example MVVM architecture using MovieDB Api data source
 
 - MVVM
 - Depedency Injection: KOIN
 - Http request: Retrofit
 - Room for DB
+- Source: https://developers.themoviedb.org/
 
 
 complete depedencies:
@@ -22,3 +23,5 @@ complete depedencies:
     implementation "androidx.room:room-runtime:2.2.0-rc01"
     implementation "androidx.room:room-ktx:2.2.0-rc01"
     kapt "androidx.room:room-compiler:2.2.0-rc01"
+    //Glide
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
