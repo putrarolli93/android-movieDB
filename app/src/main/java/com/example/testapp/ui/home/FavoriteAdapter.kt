@@ -48,7 +48,7 @@ class FavoriteViewHolder(private val view: View): RecyclerView.ViewHolder(view) 
             imgMovie.loadFromUrl(Constants.IMAGE_PATH + item.posterPath)
             imgMovie.setOnClickListener {
                 context.startActivity(context.intentFor<MovieDetailActivity>(
-                    "item" to item
+                    "movieDB" to item
                 ))
             }
             tvOverview.text = item.overview

@@ -9,7 +9,7 @@ import com.example.testapp.utils.db.room.MovieDao
 import com.example.testapp.utils.db.room.MovieRoomDatabase
 import kotlinx.android.synthetic.main.activity_favorite.*
 
-class FavoriteActivity: AppCompatActivity() {
+class FavoriteActivity : AppCompatActivity() {
 
     private lateinit var database: MovieRoomDatabase
     private lateinit var dao: MovieDao
@@ -19,7 +19,7 @@ class FavoriteActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_favorite)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        this.title  = "Favorite"
+        this.title = "Favorite"
 
         setFavoriteAdapter()
         getData()
@@ -29,9 +29,12 @@ class FavoriteActivity: AppCompatActivity() {
         database = MovieRoomDatabase.getDatabase(this)
         dao = database.getMovieDao()
         val favoriteMovie = dao.getAll()
-        if (favoriteMovie.isNotEmpty()) {
-            favoriteAdapter.updateList(favoriteMovie.toMutableList())
-        }
+        favoriteAdapter.updateList(favoriteMovie.toMutableList())
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getData()
     }
 
     private fun setFavoriteAdapter() {

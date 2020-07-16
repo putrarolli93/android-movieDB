@@ -21,26 +21,39 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class MovieDetailActivity : BaseActivity() {
 
     private var movie: Movie? = null
+    private var movieDB: MovieEntity? = null
     private val mainViewModel: MainViewModel by viewModel()
     private lateinit var database: MovieRoomDatabase
     private lateinit var dao: MovieDao
     private var isFavorite: Boolean = false
+    private var movieId: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_movie)
-        getIntentData()
-        setToolbar()
         database = MovieRoomDatabase.getDatabase(this)
         dao = database.getMovieDao()
+        getIntentData()
+        setToolbar()
         getMovieData()
     }
 
     private fun getIntentData() {
-        movie = intent?.getParcelableExtra("item") as Movie
-        movie?.let {
-            setView(it)
-            mainViewModel.getReviews(it.id)
+        movie = intent?.getParcelableExtra("item")
+        movieDB = intent?.getParcelableExtra("movieDB")
+        if (movie != null) {
+            movie?.let {
+                movieId = it.id
+                setView(it)
+                mainViewModel.getReviews(it.id)
+            }
+        }
+        if (movieDB != null) {
+            movieDB?.let {
+                movieId = it.id
+                setView(Movie(it.id, it.posterPath, it.title, it.releaseDate, it.overview))
+                mainViewModel.getReviews(it.id)
+            }
         }
         mainViewModel.moviewReview.observe(this, Observer {
             goneHorizonTopProgressBar()
@@ -93,10 +106,9 @@ class MovieDetailActivity : BaseActivity() {
                         isVaforiteMovie
                     )
                 )
-            }else {
+            } else {
                 dao.deleteById(item.id)
             }
-
             getMovieData()
         }
     }
@@ -106,22 +118,26 @@ class MovieDetailActivity : BaseActivity() {
         shareIntent.type = "text/plain"
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Good Movie")
         var shareMessage =
-            "\ni'd like to share my favorite movie, i hope you like this movie. :)\n"
+            "\ni'd like to share my favorite movie i hope you like this movie. :)\n"
+        var title = "\n This is -- ${item.title} --\n"
         shareMessage =
-            "$shareMessage ${Constants.IMAGE_PATH + item.poster_path} \n Terima Kasih"
+            "$shareMessage $title ${Constants.IMAGE_PATH + item.poster_path} \n Terima Kasih"
         shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage)
         startActivity(Intent.createChooser(shareIntent, "choose one"))
     }
 
     private fun getMovieData() {
-        val movie = movie?.id?.let {
-            dao.getById(it)
+        val movieById = dao.getById(movieId)
+        if (movieById != null) {
+            isFavorite = movieById?.isFavorite ?: false
+        } else {
+            isFavorite = false
         }
-        isFavorite = movie?.isFavorite ?: false
         if (this.isFavorite) {
             ivLove.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.heart))
         } else {
             ivLove.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.heart_empty))
         }
     }
+
 }
