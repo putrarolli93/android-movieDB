@@ -2,14 +2,13 @@ package com.example.testapp.ui.home
 
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.testapp.R
+import com.example.testapp.databinding.ActivityFavoriteBinding
+import com.example.testapp.utils.base.BaseActivity
 import com.example.testapp.utils.db.room.MovieDao
 import com.example.testapp.utils.db.room.MovieRoomDatabase
-import kotlinx.android.synthetic.main.activity_favorite.*
 
-class FavoriteActivity : AppCompatActivity() {
+class FavoriteActivity : BaseActivity<ActivityFavoriteBinding>(ActivityFavoriteBinding::inflate) {
 
     private lateinit var database: MovieRoomDatabase
     private lateinit var dao: MovieDao
@@ -17,7 +16,6 @@ class FavoriteActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_favorite)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         this.title = "Favorite"
 
@@ -41,8 +39,8 @@ class FavoriteActivity : AppCompatActivity() {
         favoriteAdapter = FavoriteAdapter()
         val layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        rvFavorite.layoutManager = layoutManager
-        rvFavorite.adapter = favoriteAdapter
+        binding?.rvFavorite.layoutManager = layoutManager
+        binding?.rvFavorite.adapter = favoriteAdapter
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

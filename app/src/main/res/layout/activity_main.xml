@@ -90,10 +90,4 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <com.example.testapp.utils.customview.CustomStateView
-        android:id="@+id/stateView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

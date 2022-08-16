@@ -1,24 +1,20 @@
 package com.example.testapp.ui.home
 
+import android.content.Intent
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.testapp.R
+import com.example.testapp.databinding.LayoutItemMovieBinding
 import com.example.testapp.model.Movie
 import com.example.testapp.utils.Constants
 import com.example.testapp.utils.ext.loadFromUrl
-import kotlinx.android.synthetic.main.layout_item_movie.view.*
-import kotlinx.android.synthetic.main.layout_item_movie_banner.view.imgMovie
-import org.jetbrains.anko.intentFor
 
 class TopMovieAdapter : RecyclerView.Adapter<TopMovieViewHolder>() {
 
     private var movie = mutableListOf<Movie>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TopMovieViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.layout_item_movie, parent, false)
+        val view = LayoutItemMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return TopMovieViewHolder(view)
     }
 
@@ -37,7 +33,7 @@ class TopMovieAdapter : RecyclerView.Adapter<TopMovieViewHolder>() {
 
 }
 
-class TopMovieViewHolder(private val view: View): RecyclerView.ViewHolder(view) {
+class TopMovieViewHolder(private val view: LayoutItemMovieBinding): RecyclerView.ViewHolder(view.root) {
 
     fun bind(item: Movie) {
         view.apply {
@@ -45,9 +41,9 @@ class TopMovieViewHolder(private val view: View): RecyclerView.ViewHolder(view) 
             tvRelease.text = "Release: " + item.release_date
             imgMovie.loadFromUrl(Constants.IMAGE_PATH + item.poster_path)
             imgMovie.setOnClickListener {
-                context.startActivity(context.intentFor<MovieDetailActivity>(
-                    "item" to item
-                ))
+                val intent = Intent(itemView.context, MovieDetailActivity::class.java)
+                intent.putExtra("item", item)
+                itemView.context.startActivity(intent)
             }
         }
     }

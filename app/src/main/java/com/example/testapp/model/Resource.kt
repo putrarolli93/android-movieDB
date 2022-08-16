@@ -22,9 +22,8 @@ data class Resource<out T>(
             return Resource(Status.ERROR_500, null, null, throwable)
         }
 
-        fun <T> networkFailed(throwable: Throwable? = null): Resource<T> {
-            return Resource(Status.NETWORK_FAILED, null, null, throwable)
-        }
+        fun <T> networkFailed(throwable: Throwable? = null): Resource<T> =
+            Resource(status = Status.NETWORK_FAILED, null, null, throwable = throwable)
     }
 }
 

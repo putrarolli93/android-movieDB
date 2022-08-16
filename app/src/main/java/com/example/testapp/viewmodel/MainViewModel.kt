@@ -1,35 +1,41 @@
 package com.example.testapp.viewmodel
 
-import android.annotation.SuppressLint
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.testapp.model.Movie
 import com.example.testapp.model.Resource
 import com.example.testapp.model.Reviews
 import com.example.testapp.network.ApiService
 import com.example.testapp.network.Repository
+import com.example.testapp.repository.MainRepository
 import com.example.testapp.viewmodel.base.BaseViewModel
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.*
 
-class MainViewModel(private val service: ApiService, private val repository: Repository) : BaseViewModel() {
-    val listPopular = MutableLiveData<Resource<MutableList<Movie>>>()
+class MainViewModel(
+    private val service: ApiService,
+    private val repository: Repository,
+    private val mainRepository: MainRepository
+) : BaseViewModel() {
+    val listPopular = MutableLiveData<Resource<MutableList<Movie>?>>()
     val listTop = MutableLiveData<MutableList<Movie>>()
     val listNowPlaying = MutableLiveData<MutableList<Movie>>()
     val moviewReview = MutableLiveData<MutableList<Reviews>>()
 
-    @SuppressLint("CheckResult")
     fun getPopularMovie() {
-        dataLoading.value = true
-        service.getPopularMovies()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ result ->
-                listPopular.value = Resource.success(result.results)
-                dataLoading.value = false
-            }, {
-                listPopular.postValue(Resource.networkFailed(it))
-                dataLoading.value = false
-            })
+        viewModelScope.async(Dispatchers.IO) {
+            try {
+                val result = mainRepository.getPopularMovies().await() //suspend
+//                withContext(Dispatchers.Main) {
+                    if (result.results != null) {
+                        listPopular.postValue(Resource.success(result?.results))
+                    }
+//                }
+            }catch (e: Exception) {
+                listPopular.postValue(Resource.networkFailed(throwable = e.cause))
+            }
+
+        }
+
     }
 
     fun getTopMovie() {

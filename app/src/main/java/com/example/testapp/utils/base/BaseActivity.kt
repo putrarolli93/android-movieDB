@@ -1,211 +1,143 @@
 package com.example.testapp.utils.base
 
-import android.os.Build
 import android.os.Bundle
-import android.transition.Fade
-import android.view.View
-import android.view.ViewGroup
-import android.view.Window
+import android.view.LayoutInflater
 import android.widget.LinearLayout
-import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
-import com.example.testapp.R
-import com.example.testapp.utils.customview.AlertContentView
-import com.example.testapp.utils.customview.CustomStateView
-import com.example.testapp.utils.customview.HorizontalProgressBar
-import com.google.android.material.snackbar.Snackbar
+import androidx.viewbinding.ViewBinding
+import com.example.testapp.utils.ui.LoadingDialog
+import com.example.testapp.utils.ui.LoadingDialogAbsolute
 
-interface BaseView {
+/**
+ * Used for setting standard in declaring activities.
+ * [bindingFactory] Declares lambda property to inflate the ViewBinding object.
+ */
+abstract class BaseActivity<B: ViewBinding>(private val bindingFactory: (LayoutInflater) -> B): AppCompatActivity(), BaseActivityView {
 
-    fun getStateView(): CustomStateView?
+    private val loadingDialog by lazy {
+        LoadingDialog(this)
+    }
 
-    fun loadingData(isFromSwipe: Boolean = false)
+    private val loadingDialogAbsolute by lazy {
+        LoadingDialogAbsolute(this)
+    }
 
-}
+    /**
+     * [binding] object to call views from layout.
+     */
+    protected lateinit var binding: B
 
-abstract class BaseActivity : AppCompatActivity(), BaseView {
-
-    protected var horizontalProgressBar: HorizontalProgressBar? = null
-    private var alertContentView: AlertContentView? = null
-
+    /**
+     * This method functions to inflate the layout and calls methods such as:
+     * initData()
+     * initView(savedInstanceState)
+     * initEvent()
+     * loadingData()
+     * observeData()
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setupWindowTransition()
-        showHorizonTopProgressBar()
-        supportActionBar?.hide()
+        binding = bindingFactory(layoutInflater)
+        setContentView(binding.root)
+        initActivityResultLauncher()
+        initData()
+        initView(savedInstanceState)
+        initEvent()
+        loadingData()
+        observeData()
     }
 
-    private fun setupWindowTransition() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            with(window) {
-                requestFeature(
-                    Window.FEATURE_CONTENT_TRANSITIONS
-                            or Window.FEATURE_ACTIVITY_TRANSITIONS)
-                enterTransition = Fade()
-                exitTransition = Fade()
-            }
+    /**
+     * This method is used to initialize all data like intent.
+     */
+    override fun initData() {}
+
+    /**
+     * This method is used to initialize all views like setting TextView's text, ImageView's resource, etc.
+     */
+    override fun initView(savedInstanceState: Bundle?) {
+
+    }
+
+    /**
+     * Initializes the events like onClick.
+     */
+    override fun initEvent() {}
+
+    /**
+     * Initializes the onActivityResultCallback
+     */
+    override fun initActivityResultLauncher() {}
+
+    /**
+     * Put all the code that is used to load data.
+     */
+    override fun loadingData() {}
+
+    /**
+     * Used to observe the changes in the data through ViewModel.
+     */
+    override fun observeData() {}
+
+    /**
+     * Show the [loadingDialog] when starts loading.
+     */
+    override fun showLoadingDialog() {
+        loadingDialog.show()
+    }
+
+    /**
+     * Hide the [loadingDialog].
+     */
+    override fun hideLoadingDialog() {
+        loadingDialog.hide()
+    }
+
+    /**
+     * Dismiss the [loadingDialog].
+     */
+    override fun dismissLoadingDialog() {
+        if (loadingDialog.isShowing){
+            loadingDialog.dismiss()
         }
     }
 
-    fun showHorizonTopProgressBar() {
-        if (horizontalProgressBar == null) {
-            horizontalProgressBar = HorizontalProgressBar(this)
-            decorViewGroup()?.addView(
-                horizontalProgressBar,
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            )
-        }
-        horizontalProgressBar?.visible()
+    /**
+     * Show the [loadingDialogAbsolute] when starts loading.
+     */
+    override fun showLoadingDialogAbsolute() {
+        loadingDialogAbsolute.show()
     }
 
-    fun goneHorizonTopProgressBar() {
-        horizontalProgressBar?.gone()
+    /**
+     * Hide the [loadingDialogAbsolute].
+     */
+    override fun hideLoadingDialogAbsolute() {
+        loadingDialogAbsolute.hide()
     }
 
-    fun decorViewGroup(): ViewGroup? {
-        return when (isDecorViewGroup()) {
-            true -> window.decorView as ViewGroup
-            else -> null
-        }
-    }
-
-    fun isDecorViewGroup(): Boolean {
-        return window.decorView is ViewGroup
-    }
-
-    fun showContentServerError(
-        messageAlerts: Pair<String, String>?, textAlertButton: String?,
-        iconDrawableAlert: Int?,
-        onRetry: ((alertContentView: AlertContentView?) -> Unit)?
-    ) {
-        if (!isDecorViewGroup())
-            return
-        addAlertContentView()
-        setContentAlertMessages(Pair(getString(R.string.error_server_busy),
-            getString(R.string.error_general_issue)), messageAlerts)
-        setContentAlertDrawable(R.drawable.ic_server_error, iconDrawableAlert)
-        setActionButtonText(getString(R.string.text_try_again), textAlertButton)
-
-        alertContentView?.let {
-            with(it) {
-                setOnRetryListener(onRetry)
-                visible()
-            }
+    /**
+     * Dismiss the [loadingDialogAbsolute].
+     */
+    override fun dismissLoadingDialogAbsolute() {
+        if (loadingDialogAbsolute.isShowing){
+            loadingDialogAbsolute.dismiss()
         }
     }
 
-    fun goneContentServerError(onRetry: ((alertContentView: AlertContentView?) -> Unit)?) {
-        alertContentView?.goneIf(true)
-    }
+    /**
+     * Throws an exception when error.
+     */
+    override fun onError(throwable: Throwable?) {}
 
-    private fun setActionButtonText(
-        defaultTextAlertButton: String,
-        textAlertButton: String?
-    ) {
-        when (textAlertButton) {
-            null -> alertContentView?.setButtonActionText(defaultTextAlertButton)
-            else -> alertContentView?.setButtonActionText(textAlertButton)
-        }
-    }
+    /**
+     * Throws an exception when connection to the internet has failed.
+     */
+    override fun onInternetError() {}
 
-    private fun setContentAlertDrawable(
-        @DrawableRes defaultIconDrawableAlert: Int,
-        @DrawableRes iconDrawableAlert: Int?
-    ) {
-        when (iconDrawableAlert) {
-            null -> alertContentView?.setIconAlertDrawable(defaultIconDrawableAlert)
-            else -> alertContentView?.setIconAlertDrawable(iconDrawableAlert)
-        }
-    }
-
-    private fun setContentAlertMessages(
-        defaultMessages: Pair<String, String>,
-        messageAlerts: Pair<String, String>?
-    ) {
-        when (messageAlerts) {
-            null -> {
-                with(defaultMessages) {
-                    alertContentView?.let {
-                        it.setTitleMessage(first)
-                        it.setBodyMessage(second)
-                    }
-                }
-            }
-            else -> {
-                with(messageAlerts) {
-                    alertContentView?.let {
-                        it.setTitleMessage(first)
-                        it.setBodyMessage(second)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun addAlertContentView() {
-        when (alertContentView) {
-            null -> {
-                alertContentView = instanceAlertContentView()
-                decorViewGroup()?.addView(alertContentView,
-                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
-            }
-        }
-    }
-
-    private fun instanceAlertContentView(): AlertContentView {
-        return AlertContentView(this)
-    }
-
-    fun View.goneIf(condition: Boolean) {
-        if (condition) this.visibility = View.GONE else this.visibility = View.VISIBLE
-    }
-
-    fun onDataNotFound() {
-        when (val sv = getStateView()) {
-            null -> {
-                displayMessage(getString(R.string.error_no_data))
-            }
-            else -> {
-
-                if (sv.isDataLoaded) {
-                    displayMessage(getString(R.string.error_no_data))
-                    return
-                }
-
-                val data = dataStateView {
-                    icon = R.drawable.ic_img_no_internet
-                    title = getString(R.string.error_no_data_title)
-                    description = getString(R.string.error_no_data_desc)
-                }
-                sv.setDataStateView(data)
-                sv.visible()
-            }
-        }
-    }
-
-    fun View.visible() {
-        this.visibility = View.VISIBLE
-    }
-
-    fun dataStateView(inputs: CustomStateView.DataStateView.() -> Unit): CustomStateView.DataStateView
-            = CustomStateView.DataStateView().apply(inputs)
-
-    override fun getStateView(): CustomStateView? = null
-
-    private fun displayMessage(message: String?) {
-        getParentViewGroup()?.let { vg ->
-            message?.let { Snackbar.make(vg, it, Snackbar.LENGTH_SHORT).show() }
-        }
-    }
-
-    fun getParentViewGroup(): ViewGroup? = decorViewGroup()
-
-    override fun loadingData(isFromSwipe: Boolean) {
-    }
-
-    fun View.gone() {
-        this.visibility = View.GONE
-    }
+    /**
+     * Throws an exception when error with message.
+     */
+    override fun onErrorWithMessage(message: String?) {}
 
 }

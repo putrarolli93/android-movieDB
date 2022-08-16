@@ -1,26 +1,20 @@
 package com.example.testapp.ui.home
 
+import android.content.Intent
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.testapp.R
+import com.example.testapp.databinding.LayoutItemFavoriteBinding
 import com.example.testapp.model.entity.MovieEntity
 import com.example.testapp.utils.Constants
 import com.example.testapp.utils.ext.loadFromUrl
-import kotlinx.android.synthetic.main.layout_item_favorite.view.*
-import kotlinx.android.synthetic.main.layout_item_movie.view.imgMovie
-import kotlinx.android.synthetic.main.layout_item_movie.view.tvRelease
-import kotlinx.android.synthetic.main.layout_item_movie.view.tvTitle
-import org.jetbrains.anko.intentFor
 
 class FavoriteAdapter : RecyclerView.Adapter<FavoriteViewHolder>() {
 
     private var movie = mutableListOf<MovieEntity>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.layout_item_favorite, parent, false)
+        val view = LayoutItemFavoriteBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return FavoriteViewHolder(view)
     }
 
@@ -39,7 +33,7 @@ class FavoriteAdapter : RecyclerView.Adapter<FavoriteViewHolder>() {
 
 }
 
-class FavoriteViewHolder(private val view: View): RecyclerView.ViewHolder(view) {
+class FavoriteViewHolder(private val view: LayoutItemFavoriteBinding): RecyclerView.ViewHolder(view.root) {
 
     fun bind(item: MovieEntity) {
         view.apply {
@@ -47,9 +41,9 @@ class FavoriteViewHolder(private val view: View): RecyclerView.ViewHolder(view) 
             tvRelease.text = "Release: " + item.releaseDate
             imgMovie.loadFromUrl(Constants.IMAGE_PATH + item.posterPath)
             imgMovie.setOnClickListener {
-                context.startActivity(context.intentFor<MovieDetailActivity>(
-                    "movieDB" to item
-                ))
+                val intent = Intent(itemView.context, MovieDetailActivity::class.java)
+                intent.putExtra("movieDB", item)
+                itemView.context.startActivity(intent)
             }
             tvOverview.text = item.overview
         }

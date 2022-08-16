@@ -11,7 +11,7 @@
         android:textSize="40sp"
         android:text="Page 2" />
 
-    <com.example.testapp.ui.home.fragment.CustomDatePickerView
+    <com.example.testapp.ui.home.fragment.CustomDatePicker
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/DefaultNumberPickerTheme"

@@ -4,7 +4,9 @@ import com.example.testapp.model.MovieListModel
 import com.example.testapp.model.MovieReviewModel
 import com.example.testapp.utils.Constants
 import io.reactivex.Single
+import kotlinx.coroutines.Deferred
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -12,9 +14,9 @@ import retrofit2.http.Query
 interface ApiService {
 
     @GET("popular")
-    fun getPopularMovies(
+    suspend fun getPopularMovies(
         @Query("api_key") apiKey: String = Constants.API_KEY
-    ): Single<MovieListModel>
+    ): Deferred<MovieListModel>
 
     @GET("top_rated")
     fun getTopMovies(

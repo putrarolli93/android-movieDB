@@ -48,7 +48,7 @@ fun provideHttpClient(): OkHttpClient {
 private fun retrofit(baseUrl: String) = Retrofit.Builder()
     .callFactory(OkHttpClient.Builder().build())
     .baseUrl(baseUrl)
-    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+//    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
     .addConverterFactory(GsonConverterFactory.create())  // 6
     .client(provideHttpClient())
     .build()

@@ -2,9 +2,13 @@ package com.example.testapp.ui.home
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.example.testapp.R
+import com.example.testapp.databinding.ActivityDetailMovieBinding
+import com.example.testapp.databinding.LayoutItemMovieBinding
+import com.example.testapp.databinding.LayoutItemReviewBinding
 import com.example.testapp.model.Movie
 import com.example.testapp.model.entity.MovieEntity
 import com.example.testapp.utils.Constants
@@ -13,12 +17,10 @@ import com.example.testapp.utils.db.room.MovieDao
 import com.example.testapp.utils.db.room.MovieRoomDatabase
 import com.example.testapp.utils.ext.loadFromUrl
 import com.example.testapp.viewmodel.MainViewModel
-import kotlinx.android.synthetic.main.activity_detail_movie.*
-import kotlinx.android.synthetic.main.layout_item_review.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class MovieDetailActivity : BaseActivity() {
+class MovieDetailActivity : BaseActivity<ActivityDetailMovieBinding>(ActivityDetailMovieBinding::inflate) {
 
     private var movie: Movie? = null
     private var movieDB: MovieEntity? = null
@@ -28,18 +30,25 @@ class MovieDetailActivity : BaseActivity() {
     private var isFavorite: Boolean = false
     private var movieId: Int = 0
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_detail_movie)
+    override fun initData() {
+        super.initData()
         database = MovieRoomDatabase.getDatabase(this)
         dao = database.getMovieDao()
         getIntentData()
+    }
+
+    override fun initView(savedInstanceState: Bundle?) {
+        super.initView(savedInstanceState)
         setToolbar()
+    }
+
+    override fun loadingData() {
+        super.loadingData()
         getMovieData()
     }
 
     private fun getIntentData() {
-        movie = intent?.getParcelableExtra("item")
+        movie = intent?.extras?.getParcelable("item")
         movieDB = intent?.getParcelableExtra("movieDB")
         if (movie != null) {
             movie?.let {
@@ -56,28 +65,28 @@ class MovieDetailActivity : BaseActivity() {
             }
         }
         mainViewModel.moviewReview.observe(this, Observer {
-            goneHorizonTopProgressBar()
+            dismissLoadingDialog()
             for (i in 0 until it.count()) {
-                val child = layoutInflater.inflate(R.layout.layout_item_review, clReview, false)
-                llReview.addView(child)
-                tvAuthor.text = "author : " + it[i].author
-                tvReview.text = it[i].content
+                val view = LayoutItemReviewBinding.inflate(LayoutInflater.from(this))
+                binding.llReview.addView(view.clReview)
+                view.tvAuthor.text = "author : " + it[i].author
+                view.tvReview.text = it[i].content
             }
         })
     }
 
     private fun setToolbar() {
-        toolbar.setOnClickListener {
+        binding.toolbar.setOnClickListener {
             finish()
         }
-        collapsingToolbar.title = "Detail"
-        collapsingToolbar.setCollapsedTitleTextColor(
+        binding.collapsingToolbar.title = "Detail"
+        binding.collapsingToolbar.setCollapsedTitleTextColor(
             ContextCompat.getColor(
                 this,
                 R.color.colorWhite
             )
         )
-        collapsingToolbar.setExpandedTitleColor(
+        binding.collapsingToolbar.setExpandedTitleColor(
             ContextCompat.getColor(
                 this,
                 android.R.color.transparent
@@ -86,30 +95,32 @@ class MovieDetailActivity : BaseActivity() {
     }
 
     private fun setView(item: Movie) {
-        imgMovie.loadFromUrl(Constants.IMAGE_PATH + item.poster_path)
-        tvTitle.text = item.title
-        tvReleaseDate.text = item.release_date
-        tvDescription.text = item.overview
-        ivShare.setOnClickListener {
-            shareMovie(item)
-        }
-        ivLove.setOnClickListener {
-            var isVaforiteMovie = if (isFavorite) false else true
-            if (isVaforiteMovie) {
-                dao.insert(
-                    MovieEntity(
-                        item.id,
-                        item.poster_path,
-                        item.title,
-                        item.release_date,
-                        item.overview,
-                        isVaforiteMovie
-                    )
-                )
-            } else {
-                dao.deleteById(item.id)
+        binding.apply {
+            imgMovie.loadFromUrl(Constants.IMAGE_PATH + item.poster_path)
+            tvTitle.text = item.title
+            tvReleaseDate.text = item.release_date
+            tvDescription.text = item.overview
+            ivShare.setOnClickListener {
+                shareMovie(item)
             }
-            getMovieData()
+            ivLove.setOnClickListener {
+                var isVaforiteMovie = if (isFavorite) false else true
+                if (isVaforiteMovie) {
+                    dao.insert(
+                        MovieEntity(
+                            item.id,
+                            item.poster_path,
+                            item.title,
+                            item.release_date,
+                            item.overview,
+                            isVaforiteMovie
+                        )
+                    )
+                } else {
+                    dao.deleteById(item.id)
+                }
+                getMovieData()
+            }
         }
     }
 
@@ -134,9 +145,9 @@ class MovieDetailActivity : BaseActivity() {
             isFavorite = false
         }
         if (this.isFavorite) {
-            ivLove.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.heart))
+            binding.ivLove.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.heart))
         } else {
-            ivLove.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.heart_empty))
+            binding.ivLove.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.heart_empty))
         }
     }
 
