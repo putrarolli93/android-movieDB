@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.testapp.model.entity.MovieEntity
+import com.example.testapp.network.model.entity.MovieEntity
 
 //Database annotation to specify the entities and set version
 @Database(entities = [MovieEntity::class], version = 2, exportSchema = false)

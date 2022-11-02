@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.testapp.databinding.LayoutItemMovieBinding
-import com.example.testapp.model.Movie
+import com.example.testapp.network.model.Movie
 import com.example.testapp.utils.Constants
 import com.example.testapp.utils.ext.loadFromUrl
 

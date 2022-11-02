@@ -1,8 +1,8 @@
 package com.example.testapp.utils.base
 
 import android.os.Bundle
-import com.example.testapp.model.Resource
-import com.example.testapp.model.Status
+import com.example.testapp.network.model.Resource
+import com.example.testapp.network.model.Status
 
 interface BaseFragmentView {
 

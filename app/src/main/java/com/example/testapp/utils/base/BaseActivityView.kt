@@ -1,8 +1,8 @@
 package com.example.testapp.utils.base
 
 import android.os.Bundle
-import com.example.testapp.model.Resource
-import com.example.testapp.model.Status
+import com.example.testapp.network.model.Resource
+import com.example.testapp.network.model.Status
 
 interface BaseActivityView {
 
@@ -27,6 +27,22 @@ interface BaseActivityView {
     fun onErrorWithMessage(message: String? = null)
 
     fun onInternetError()
+
+    /**
+     * Group function show and gone UI view progress bar
+     */
+
+    fun showLoadingDialog(){}
+
+    fun hideLoadingDialog(){}
+
+    fun dismissLoadingDialog(){}
+
+    fun showLoadingDialogAbsolute(){}
+
+    fun hideLoadingDialogAbsolute(){}
+
+    fun dismissLoadingDialogAbsolute(){}
 
     fun <T> parseObserveData(
         resource: Resource<T>,
@@ -55,20 +71,4 @@ interface BaseActivityView {
             }
         }
     }
-
-    /**
-     * Group function show and gone UI view progress bar
-     */
-
-    fun showLoadingDialog(){}
-
-    fun hideLoadingDialog(){}
-
-    fun dismissLoadingDialog(){}
-
-    fun showLoadingDialogAbsolute(){}
-
-    fun hideLoadingDialogAbsolute(){}
-
-    fun dismissLoadingDialogAbsolute(){}
 }

@@ -2,11 +2,10 @@ package com.example.testapp.ui.home
 
 import android.content.Intent
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.testapp.databinding.LayoutItemMovieBannerBinding
-import com.example.testapp.model.Movie
+import com.example.testapp.network.model.Movie
 import com.example.testapp.utils.Constants
 import com.example.testapp.utils.ext.loadFromUrl
 

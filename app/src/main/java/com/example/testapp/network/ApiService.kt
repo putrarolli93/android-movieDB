@@ -1,12 +1,10 @@
 package com.example.testapp.network
 
-import com.example.testapp.model.MovieListModel
-import com.example.testapp.model.MovieReviewModel
+import com.example.testapp.network.model.MovieListModel
+import com.example.testapp.network.model.MovieReviewModel
 import com.example.testapp.utils.Constants
 import io.reactivex.Single
-import kotlinx.coroutines.Deferred
 import retrofit2.Call
-import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -16,12 +14,12 @@ interface ApiService {
     @GET("popular")
     suspend fun getPopularMovies(
         @Query("api_key") apiKey: String = Constants.API_KEY
-    ): Deferred<MovieListModel>
+    ): MovieListModel
 
     @GET("top_rated")
     fun getTopMovies(
         @Query("api_key") apiKey: String = Constants.API_KEY
-    ): Call<MovieListModel>
+    ): Single<MovieListModel>
 
     @GET("now_playing")
     fun getNowPlayingMovies(

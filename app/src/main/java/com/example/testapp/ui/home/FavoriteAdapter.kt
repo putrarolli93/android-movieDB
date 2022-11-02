@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.testapp.databinding.LayoutItemFavoriteBinding
-import com.example.testapp.model.entity.MovieEntity
+import com.example.testapp.network.model.entity.MovieEntity
 import com.example.testapp.utils.Constants
 import com.example.testapp.utils.ext.loadFromUrl
 

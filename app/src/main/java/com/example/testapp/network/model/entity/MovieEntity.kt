@@ -1,4 +1,4 @@
-package com.example.testapp.model.entity
+package com.example.testapp.network.model.entity
 
 import android.os.Parcelable
 import androidx.room.ColumnInfo

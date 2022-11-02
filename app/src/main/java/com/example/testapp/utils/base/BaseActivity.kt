@@ -2,7 +2,6 @@ package com.example.testapp.utils.base
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
 import com.example.testapp.utils.ui.LoadingDialog

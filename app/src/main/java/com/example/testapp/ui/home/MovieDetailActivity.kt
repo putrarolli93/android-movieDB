@@ -7,10 +7,9 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.example.testapp.R
 import com.example.testapp.databinding.ActivityDetailMovieBinding
-import com.example.testapp.databinding.LayoutItemMovieBinding
 import com.example.testapp.databinding.LayoutItemReviewBinding
-import com.example.testapp.model.Movie
-import com.example.testapp.model.entity.MovieEntity
+import com.example.testapp.network.model.Movie
+import com.example.testapp.network.model.entity.MovieEntity
 import com.example.testapp.utils.Constants
 import com.example.testapp.utils.base.BaseActivity
 import com.example.testapp.utils.db.room.MovieDao

@@ -1,7 +1,7 @@
 package com.example.testapp.utils.db.room
 
 import androidx.room.*
-import com.example.testapp.model.entity.MovieEntity
+import com.example.testapp.network.model.entity.MovieEntity
 
 @Dao
 interface MovieDao {

@@ -1,4 +1,4 @@
-package com.example.testapp.model
+package com.example.testapp.network.model
 
 data class Resource<out T>(
     val status: Status,
@@ -24,6 +24,18 @@ data class Resource<out T>(
 
         fun <T> networkFailed(throwable: Throwable? = null): Resource<T> =
             Resource(status = Status.NETWORK_FAILED, null, null, throwable = throwable)
+
+//        fun <T> cached(data: T?, date: Date?): Resource<T> {
+//            return Resource(status = Status.CACHED, data = data, date = date)
+//        }
+
+        fun <T> reAuthenticate(): Resource<T> {
+            return Resource(Status.REAUTH, data = null, message = null)
+        }
+
+        fun <T> logout(): Resource<T> {
+            return Resource(Status.LOGOUT, data = null, message = null)
+        }
     }
 }
 
@@ -32,5 +44,8 @@ enum class Status {
     ERROR,
     LOADING,
     NETWORK_FAILED,
-    ERROR_500
+    ERROR_500,
+    CACHED,
+    REAUTH,
+    LOGOUT
 }

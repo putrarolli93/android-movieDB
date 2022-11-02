@@ -1,20 +1,16 @@
 package com.example.testapp.ui.home
 
-import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
-import android.widget.DatePicker
 import android.widget.Toast
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.testapp.databinding.ActivityMainBinding
-import com.example.testapp.model.Status
+import com.example.testapp.network.model.Status
 import com.example.testapp.utils.base.BaseActivity
 import com.example.testapp.viewmodel.MainViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-open class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::inflate),
-    DatePickerDialog.OnDateSetListener {
+open class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::inflate){
 
     private val mainViewModel: MainViewModel by viewModel()
     private lateinit var popularAdapter: PopularMovieAdapter
@@ -23,48 +19,49 @@ open class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding:
 
     override fun observeData() {
         super.observeData()
+        observeWithCoroutine()
+        observeWithRX()
+    }
+
+    private fun observeWithCoroutine() {
         mainViewModel.listPopular.observe(this) {
             parseObserveData(it,
                 resultSuccess = {
                     dismissLoadingDialog()
-                    it?.let { it1 -> popularAdapter.updateList(it1) }
+                    it?.let { it1 -> popularAdapter.updateList(it1.results) }
                 },
                 resultError = {
                     dismissLoadingDialog()
-                    Toast.makeText(this, it?.message?: "", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, it?.message, Toast.LENGTH_LONG).show()
                 },
                 resultNetworkFailed = {
                     dismissLoadingDialog()
-                    Toast.makeText(this, it?.message?: "", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, it?.cause?.message, Toast.LENGTH_LONG).show()
                 }
-
             )
-
-            mainViewModel.listTop.observe(this, Observer {
-                dismissLoadingDialog()
-                topAdapter.updateList(it)
-            })
-            mainViewModel.listNowPlaying.observe(this, Observer {
-                dismissLoadingDialog()
-                nowPlayingAdapter.updateList(it)
-            })
         }
     }
 
-    override fun onError(throwable: Throwable?) {
-        super.onError(throwable)
-        Toast.makeText(this, throwable?.message, Toast.LENGTH_LONG).show()
+    private fun observeWithRX() {
+        mainViewModel.listTop.observe(this) {
+            dismissLoadingDialog()
+            when (it.status) {
+                Status.SUCCESS -> {
+                    if (!it.data.isNullOrEmpty()) {
+                        topAdapter.updateList(it.data)
+                    }
+                }
+                Status.NETWORK_FAILED -> {
+                    Toast.makeText(this, it.throwable?.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
     }
 
     override fun loadingData() {
         super.loadingData()
         mainViewModel.getPopularMovie()
-//        mainViewModel.getTopMovie()
-//        mainViewModel.getNowPlayingMovie()
-    }
-
-    override fun initData() {
-        super.initData()
+        mainViewModel.getTopMovie()
     }
 
     override fun initEvent() {
@@ -81,7 +78,7 @@ open class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding:
 
         setPopularAdapter()
         setTopAdapter()
-        setNowPlayingAdapter()
+//        setNowPlayingAdapter()
     }
 
 
@@ -100,17 +97,13 @@ open class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding:
         binding.rvTop.layoutManager = layoutManager
         binding.rvTop.adapter = topAdapter
     }
-
-    private fun setNowPlayingAdapter() {
-        nowPlayingAdapter = NowPlayingMovieAdapter()
-        val layoutManager =
-            LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
-        binding.rvNp.layoutManager = layoutManager
-        binding.rvNp.adapter = nowPlayingAdapter
-    }
-
-    override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        print(year.toString())
-    }
+//
+//    private fun setNowPlayingAdapter() {
+//        nowPlayingAdapter = NowPlayingMovieAdapter()
+//        val layoutManager =
+//            LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
+//        binding.rvNp.layoutManager = layoutManager
+//        binding.rvNp.adapter = nowPlayingAdapter
+//    }
 
 }

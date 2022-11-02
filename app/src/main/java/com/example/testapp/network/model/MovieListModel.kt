@@ -1,4 +1,4 @@
-package com.example.testapp.model
+package com.example.testapp.network.model
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
